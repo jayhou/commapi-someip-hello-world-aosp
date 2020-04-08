@@ -1,0 +1,108 @@
+cc_defaults {
+    name: "demo_default",
+    clang: false,
+    cppflags: [
+        "-fexceptions",
+        "-DUSE_CONSOLE",
+        "-DCOMMONAPI_LOGLEVEL=COMMONAPI_LOGLEVEL_DEBUG",
+        "-pthread",
+        "-Wall",
+        "-O0",
+        "-std=c++11",
+        "-D_GLIBCXX_USE_NANOSLEEP",
+        "-DLINUX",
+    ]
+}
+
+cc_binary {
+    name: "HelloWorldClient",
+    vendor: true,
+
+    defaults: [
+        "demo_default",
+    ],
+
+    rtti: true,
+
+    srcs: [
+        "src/E01HelloWorldClient.cpp",
+        "src-gen/core/**/*Proxy.cpp",
+    ],
+
+    shared_libs: [
+        "libCommonAPI",
+        "libutils",
+        "liblog",
+    ],
+
+    ldflags: [
+        "-Wl,--as-needed",
+        "-Wl,--export-dynamic",
+    ],
+
+    local_include_dirs: [
+        "src-gen/core",
+    ],
+
+    stl: "libc++_static",
+}
+
+cc_binary {
+    name: "HelloWorldService",
+    vendor: true,
+    defaults: [
+        "demo_default",
+    ],
+
+    rtti: true,
+
+    srcs: [
+        "src/E01HelloWorldService.cpp",
+        "src/E01HelloWorldStubImpl.cpp",
+        "src-gen/core/**/*Stub*.cpp",
+    ],
+
+    shared_libs: [
+        "libCommonAPI",
+    ],
+
+    ldflags: [
+        "-Wl,--as-needed",
+    ],
+
+    local_include_dirs: [
+        "src-gen/core",
+    ],
+
+    stl: "libc++_static",
+}
+
+cc_library_shared {
+    name: "libE01HelloWorld-someip",
+    vendor: true,
+    defaults: [
+        "demo_default",
+    ],
+    rtti: true,
+
+    srcs: [
+        "src-gen/someip/v0/commonapi/examples/*.cpp",
+    ],
+
+    shared_libs: [
+        "libvsomeip",
+        "libCommonAPI",
+        "libCommonAPI-SomeIP",
+    ],
+
+    local_include_dirs: [
+        "src-gen/someip",
+        "src-gen/core",
+    ],
+
+    ldflags: [
+        "-Wl,--export-dynamic",
+    ],
+
+    stl: "libc++_static",
+}
